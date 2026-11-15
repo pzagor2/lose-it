@@ -18,6 +18,7 @@
 ## Table of contents
 
 - [Quickstart](#quickstart)
+- [Use it from your iPhone with Claude](#use-it-from-your-iphone-with-claude)
 - [Claude Code SKILL.md](#claude-code-skillmd)
 - [Subcommands](#subcommands)
   - [`login`](#login--import-the-auth-token-and-populate-the-config)
@@ -58,6 +59,90 @@ loseit login                       # default: --browser chrome
 # 3. You're ready
 loseit diary
 ```
+
+## Use it from your iPhone with Claude
+
+Run the CLI in a [Claude Code](https://claude.ai/code) cloud session and drive it from the Claude iPhone app: send a meal photo or a note, check the dry run, reply to log it. Recipes work the same way.
+
+You need:
+
+- a Mac signed into [loseit.com](https://www.loseit.com/) in Chrome or Brave (once for setup, then every two weeks to renew the token),
+- a GitHub account,
+- a Claude plan that includes Claude Code.
+
+### 1. Fork the repo and get your token (Mac)
+
+1. Fork this repository on GitHub. Cloud sessions run from a repository you own.
+2. Install the CLI and import your Lose It! login:
+
+   ```bash
+   uv tool install git+https://github.com/<you>/lose-it
+   loseit login          # copies the token from Chrome and writes ~/.config/loseit/config.yaml
+   loseit check-token    # must say "valid"
+   ```
+
+3. At [claude.ai/code](https://claude.ai/code), connect GitHub (or run `/web-setup` in Claude Code) and grant access to `<you>/lose-it`.
+
+### 2. Create the cloud environment
+
+At [claude.ai/code](https://claude.ai/code), add an environment named **Lose It**.
+
+**Environment variables** — the token comes from `pbcopy < ~/.config/loseit/token`, the rest from `~/.config/loseit/config.yaml`:
+
+```dotenv
+LOSEIT_TOKEN=<token>
+LOSEIT_USER_ID=<user_id>
+LOSEIT_USER_NAME=<user_name>
+LOSEIT_HOURS_FROM_GMT=<hours_from_gmt>
+```
+
+**Network access** — keep the default allowed list (`uv` needs the package registries) and add:
+
+```text
+www.loseit.com
+d3hsih69yn4d89.cloudfront.net
+```
+
+### 3. Start a session
+
+At [claude.ai/code](https://claude.ai/code), start a session with repository `<you>/lose-it`, branch `main` and environment **Lose It**. Send this as the first message:
+
+```text
+This repo is an unofficial Lose It! CLI. Run it with `uv run loseit ...`.
+Auth comes from the LOSEIT_* env vars in this environment.
+First run `uv run loseit check-token` to confirm auth works.
+
+When I send food (photo or text):
+- Find candidates: `uv run loseit -o toon describe-food -q "<food>"`.
+  Pick entries whose supported_units include the unit I gave (usually g).
+- Always use food_id plus the query that found it. Never rely on --pick,
+  because search order changes between calls.
+- For volume-only foods (honey, syrups, cocoa), pass --grams-per-ml / grams_per_ml
+  with a sensible density.
+- Log: `uv run loseit log "<query>" --food-id <id> --serving-amount N --serving-unit g -m <meal> --dry-run`.
+  Show me the dry run, then run it again without --dry-run.
+- Recipes: write a JSON spec and run `uv run loseit add-recipe spec.json --dry-run` first.
+  The README's add-recipe section documents the spec format.
+- Don't commit or change repo code unless I ask.
+```
+
+Wait for the `check-token` reply to say `valid`.
+
+### 4. Add the session to your Home Screen
+
+On the iPhone, open the session in Safari (copy its `https://claude.ai/code/session_…` link from the address bar on the Mac), then tap **Share → Add to Home Screen**.
+
+### Daily use
+
+Open the Home Screen icon, attach a photo, and add a note with the meal and amounts ("lunch, 150 g of this"). Check the dry run, then reply "log it".
+
+### Keeping it working
+
+| When | Do |
+| --- | --- |
+| Token expires (every 14 days; `loseit -o json check-token` shows `exp_iso`) | On the Mac run `loseit login`, replace `LOSEIT_TOKEN` in the environment, start a new session. |
+| Daylight saving time starts or ends | Update `LOSEIT_HOURS_FROM_GMT`. |
+| Commands fail with `IncompatibleRemoteServiceException` (Lose It! redeployed) | Click **Sync fork** on GitHub once the fix is merged here, then start a new session. |
 
 ## Claude Code [SKILL.md](skills/log-food/SKILL.md)
 
