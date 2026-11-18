@@ -930,8 +930,8 @@ $ loseit whoami
 user_id        : 12345678
 user_name      : your.username
 hours_from_gmt : -6
-policy_hash    : F5AA51DFF7600BE94631854AFC5DEFE9
-strong_name    : 201A8433DE84E0887AA4B65F2AD4F842
+policy_hash    : 48B8773EE1A2315CAE592AD337015120
+strong_name    : 07724599DBE904E4C1EAA6CF0150AD87
 ```
 
 ### Script-friendly output: `--output json` / `-o json`
@@ -1172,8 +1172,8 @@ hours_from_gmt: -6
 
 # Optional — refresh from any /web/service POST in DevTools when requests
 # start failing with IncompatibleRemoteServiceException.
-# policy_hash: F5AA51DFF7600BE94631854AFC5DEFE9
-# strong_name: 201A8433DE84E0887AA4B65F2AD4F842
+# policy_hash: 48B8773EE1A2315CAE592AD337015120
+# strong_name: 07724599DBE904E4C1EAA6CF0150AD87
 ```
 
 ### All settings
